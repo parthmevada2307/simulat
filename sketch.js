@@ -5,31 +5,35 @@ let buttonLabels = [
   "Master Your Aim"     // Stage 3
 ];
 
-
 let buttonColors = ["yellow", "cyan", "red"]; // Blue, Yellow, Green
-let buttonWidths = [400, 400, 400]; // Increased widths
-
 let osc; // oscillator for click sound
 let bgImage; // background image
 let clickSound;
+
+let layout = {};
 
 function preload() {
   bgImage = loadImage("projectile motion bg.jpg");
   clickSound = loadSound("button-pressed-38129.mp3");
 }
 
-function setup() {
-  createCanvas(1200, 800);
-  textFont("Helvetica");
+function buildLayout() {
+  let s = min(windowWidth / 1200, windowHeight / 800);
+  s = max(s, 0.4); // Don't scale too small
 
-  let btnHeight = 70;
-  let spacing = 50;
+  let titleSize = max(52 * s, 28);
+  let titleY = max(91 * s, 40);
 
+  let btnWidth = max(400 * s, windowWidth * 0.8);
+  let btnHeight = max(70 * s, 50);
+  let spacing = max(50 * s, 30);
+  let startY = max(320 * s, titleY + 80);
+
+  buttons = [];
   for (let i = 0; i < 3; i++) {
-    let btnWidth = buttonWidths[i];
     buttons.push({
-      x: width / 2 - btnWidth / 2,
-      y: 320 + i * (btnHeight + spacing),
+      x: windowWidth / 2 - btnWidth / 2,
+      y: startY + i * (btnHeight + spacing),
       w: btnWidth,
       h: btnHeight,
       label: buttonLabels[i],
@@ -37,10 +41,30 @@ function setup() {
     });
   }
 
+  layout = {
+    scale: s,
+    titleSize: titleSize,
+    titleY: titleY,
+    btnTextSize: max(18 * s, 14)
+  };
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  pixelDensity(1);
+  textFont("Helvetica");
+
+  buildLayout();
+
   osc = new p5.Oscillator('square');
   osc.freq(1000);
   osc.amp(0);
   osc.start();
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  buildLayout();
 }
 
 function draw() {
@@ -50,10 +74,9 @@ function draw() {
 
   fill('yellow');
   textAlign(CENTER, TOP);
-  textSize(52);
-  text("Flight With Physics", width / 2, 91);
+  textSize(layout.titleSize);
+  text("Flight With Physics", width / 2, layout.titleY);
 
-  
   for (let btn of buttons) {
     drawButton(btn);
   }
@@ -65,28 +88,37 @@ function drawButton(btn) {
   rect(btn.x, btn.y, btn.w, btn.h, 20);
 
   fill(0);
-  textSize(18);
+  textSize(layout.btnTextSize);
   textAlign(CENTER, CENTER);
   text(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2);
 }
 
 function mousePressed() {
+  handleInteraction(mouseX, mouseY);
+}
+
+function touchStarted() {
+  if (touches.length > 0) {
+    handleInteraction(touches[0].x, touches[0].y);
+  }
+  return false;
+}
+
+function handleInteraction(px, py) {
   for (let btn of buttons) {
     if (
-      mouseX > btn.x &&
-      mouseX < btn.x + btn.w &&
-      mouseY > btn.y &&
-      mouseY < btn.y + btn.h
+      px > btn.x &&
+      px < btn.x + btn.w &&
+      py > btn.y &&
+      py < btn.y + btn.h
     ) {
       playClickSound();
 
-     
       if (btn.label === "Learn to Launch") {
         window.open("https://parthmevada2307.github.io/simul1/");
       }
       
-       if (btn.label === "Master Your Aim" 
-) {
+      if (btn.label === "Master Your Aim") {
         window.open("https://parthmevada2307.github.io/simulat3/");
       }
       
