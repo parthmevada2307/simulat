@@ -93,15 +93,8 @@ function drawButton(btn) {
   text(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2);
 }
 
-function mousePressed() {
+function mouseClicked() {
   handleInteraction(mouseX, mouseY);
-}
-
-function touchStarted() {
-  if (touches.length > 0) {
-    handleInteraction(touches[0].x, touches[0].y);
-  }
-  return false;
 }
 
 function handleInteraction(px, py) {
