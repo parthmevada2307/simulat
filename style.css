@@ -4,4 +4,6 @@ html, body {
 }
 canvas {
   display: block;
+  touch-action: auto !important;
+  pointer-events: none !important;
 }
